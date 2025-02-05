@@ -2,7 +2,7 @@ import request from "supertest";
 import app from "../app";
 import createMongoConnection from "../context/mongo.db";
 import { collections } from "../context/mongo.db";
-import exp from "constants";
+
 
 describe("API Usuarios Tests", () => {
 
@@ -46,13 +46,17 @@ describe("API Usuarios Tests", () => {
         await createMongoConnection();
         await collections.usuarios.deleteMany({});
         await collections.cafes.deleteMany({});
+        await collections.cafes.insertMany([cafe1, cafe2]);
     });
 
     beforeEach(async () => {
         await collections.usuarios.deleteMany({});
+    });
 
+    afterAll(async () => {
+
+        await collections.usuarios.deleteMany({});
         await collections.cafes.deleteMany({});
-        await collections.cafes.insertMany([cafe1, cafe2]);
     });
 
     it("POST /api/usuarios/registro", async () => {
@@ -165,6 +169,7 @@ describe("API Usuarios Tests", () => {
     it("DELETE /api/usuarios/limpiar", async () => {
         const token = await doRegistro("test", "test","test");
         await añadirCafe(token, cafe3);
+        await añadirCafe(token, cafe1);
         const response = await request(app)
             .delete("/api/usuarios/limpiar")
             .set('Authorization', `Bearer ${token}`);

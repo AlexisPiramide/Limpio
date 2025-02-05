@@ -5,6 +5,7 @@ export default interface Cafe {
     tienda: Admin;
     tueste: string;
     precio?: number;
+    origen?: string;
     peso?: number;
     imagen: string | File;
     nota?: number;

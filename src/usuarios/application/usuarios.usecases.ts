@@ -5,7 +5,7 @@ import { compare } from "bcrypt";
 import { hash } from "../../../context/security/encrypter";
 import Cafe from '../../cafes/domain/Cafe';
 
-import { handleImageUpload, generateRandomString} from "./../../../context/image-upload";
+import { handleImageUpload} from "./../../../context/image-upload";
 
 export default class UsuariosUsecases {
     constructor(private usuariosRepository: UsuarioRepository) {}
