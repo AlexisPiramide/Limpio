@@ -1,0 +1,39 @@
+{
+    "name": "plantilla-ts",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.ts",
+    "scripts": {
+        "dev": "nodemon index.ts",
+        "nuevo": "node genera-carpetas.js",
+        "swagger": "node ./swagger.js",
+        "test": "NODE_ENV=test jest --coverage --coverageReporters=html"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/jest": "^29.5.14",
+        "@types/supertest": "^6.0.2",
+        "bcrypt": "^5.1.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "install": "^0.13.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongodb": "^6.12.0",
+        "pg": "^8.11.3",
+        "supertest": "^7.0.0",
+        "swagger-autogen": "^2.23.7",
+        "swagger-ui-express": "^5.0.1"
+    },
+    "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.5",
+        "@types/pg": "^8.10.9",
+        "jest": "^29.7.0",
+        "supertest": "^7.0.0",
+        "ts-jest": "^29.2.5"
+    }
+}
