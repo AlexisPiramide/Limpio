@@ -2,45 +2,9 @@ import request from "supertest";
 import app from "../app";
 import createMongoConnection from "../context/mongo.db";
 import { collections } from "../context/mongo.db";
-
+import { cafe1, cafe2, cafe3 } from "./test.items";
 
 describe("API Usuarios Tests", () => {
-
-    const cafe1 = {
-        "nombre": "Cafe 1",
-        "tienda": {
-            "tienda_alias": "Carefour",
-            "tienda_id": "679363f4d9d6cc22f26a8afb"
-        },
-        "tueste": "Torrefacto",
-        "precio": 5,
-        "imagen": "Cafe5CarefourTorrefacto1134.png",
-        "nota": 4
-    };
-
-    const cafe2 = {
-        "nombre": "Cafe 4",
-        "tienda": {
-            "tienda_alias": "Carefour",
-            "tienda_id": "679363f4d9d6cc22f26a8afb"
-        },
-        "tueste": "Torrefacto",
-        "precio": 5,
-        "imagen": "Cafe4CarefourTorrefacto244.png",
-        "nota": 2.5
-    };
-
-    const cafe3 = {
-        "nombre": "Cafe 3",
-        "tienda": {
-            "tienda_alias": "Carefour",
-            "tienda_id": "679363f4d9d6cc22f26a8afb"
-        },
-        "tueste": "Torrefacto",
-        "precio": 5,
-        "imagen": "Cafe3CarefourTorrefacto234.png",
-        "nota": 3
-    };
     
     beforeAll(async () => {
         await createMongoConnection();
@@ -54,7 +18,6 @@ describe("API Usuarios Tests", () => {
     });
 
     afterAll(async () => {
-
         await collections.usuarios.deleteMany({});
         await collections.cafes.deleteMany({});
     });

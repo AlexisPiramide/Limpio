@@ -13,18 +13,18 @@ export default class CafesUsecases {
         return this.cafesRepository.getCafe(nombre,tienda,tueste);
     }
 
-    async cafesFiltrados(nombre: string, tienda: string, tueste: string, origen: string, precioMax: number, precioMin: number, pagina: number): Promise<Cafe[]>{
-        return this.cafesRepository.cafesFiltrados(nombre, tienda, tueste, origen, precioMax, precioMin, pagina);
+    async cafesFiltrados(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number, pagina: number): Promise<Cafe[]>{
+        return this.cafesRepository.cafesFiltrados(nombre, tienda, tueste, origen,peso, precioMax, precioMin, pagina);
     }
 
     async insertarCafe(cafe: Cafe): Promise<Cafe>{
-
-        const nombreArchivo = await handleImageUpload(cafe.imagen,cafe.nombre,);
-        if(nombreArchivo){
-            cafe.imagen = nombreArchivo;
-        }else{
+        const nombreArchivo = handleImageUpload(cafe.imagen,cafe.nombre);
+        
+        if(!nombreArchivo){
             throw new Error("Error al subir la imagen")
         }
+
+        cafe.imagen = nombreArchivo;
 
         return this.cafesRepository.insertarCafe(cafe);
     }

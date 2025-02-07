@@ -9,7 +9,6 @@ import Admin from "../../../usuarios-admin/domain/Admin";
 const caferepositorypostgres: cafeRepository = new CafeRepositoryMongo();
 const cafeusecases = new CafeUsecases(caferepositorypostgres);
 
-
 const router = express.Router();
 
 router.get("/:pagina", async (req: Request, res: Response) => {
@@ -40,20 +39,11 @@ router.get("/filtrados/:pagina", async (req: Request, res: Response) => {
     * #swagger.description = 'Endpoint para obtener cafes filtrados'
     */
 
-    const { nombre, tienda, tueste, origen, precioMax, precioMin } = req.query;
+    const { nombre, tienda, tueste, origen,peso, precioMax, precioMin } = req.body;
     
     let pagina = Number(req.params.pagina) || 0;
-    console.log(nombre,tienda,tueste,origen,precioMax,precioMin,pagina);
     try {
-        const cafes: Cafe[] = await cafeusecases.cafesFiltrados(
-            nombre as string, 
-            tienda as string, 
-            tueste as string, 
-            origen as string, 
-            precioMax ? Number(precioMax) : undefined, 
-            precioMin ? Number(precioMin) : undefined,
-            pagina
-        );
+        const cafes: Cafe[] = await cafeusecases.cafesFiltrados(nombre,tienda,tueste,origen,peso,precioMax,precioMin,pagina);
         res.json(cafes);
     } catch (error) {
         if (error instanceof Error) {
@@ -89,7 +79,7 @@ router.post("/",isAdmin, async (req: Request, res: Response) => {
         imagen: imagen,
         nota: 0
     };
-    
+
     try {
         const result = await cafeusecases.insertarCafe(cafe);
         res.json(result);

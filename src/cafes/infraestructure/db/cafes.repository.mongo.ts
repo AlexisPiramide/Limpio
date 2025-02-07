@@ -2,6 +2,7 @@ import { collections } from '../../../../context/mongo.db';
 import Cafe from '../../domain/Cafe';
 import cafesRepository from '../../domain/cafes.repository';
 import { mapCafe,handleError } from '../../domain/cafes.helpers';
+
 export default class CafesRepositoryMongo implements cafesRepository {
   
     async getCafe(nombre: string, tienda: string, tueste: string): Promise<Cafe> {
@@ -26,12 +27,14 @@ export default class CafesRepositoryMongo implements cafesRepository {
     async insertarCafe(cafe: Cafe): Promise<Cafe> {
         try {
             const result = await collections.cafes.insertOne(cafe);
+
+            const cafedb = await collections.cafes.findOne(result.insertedId);
             if (!result.acknowledged) throw new Error("Error al insertar el café");
             const resultdb = await collections.usuarios.findOne({tienda_alias: cafe.tienda.tienda_alias});
-            console.log(resultdb);
+
             if(resultdb){
                 const cafes = resultdb.cafes;
-                cafes.push(cafe);
+                cafes.push(mapCafe(cafedb));
                 await collections.usuarios.updateOne({tienda_alias: cafe.tienda.tienda_alias}, { $set: { cafes } });
                 return cafe;
             }
@@ -72,16 +75,18 @@ export default class CafesRepositoryMongo implements cafesRepository {
         }
     }
 
-    async cafesFiltrados(nombre: string, tienda: string, tueste: string,origen:string,precioMax:number,precioMin:number,pagina:number): Promise<Cafe[]>{
-
+    async cafesFiltrados(nombre: string, tienda: string, tueste: string,origen:string,peso:number,precioMax:number,precioMin:number,pagina:number): Promise<Cafe[]>{
         const filtros: any = {
             ...(nombre && { nombre }),
             ...(tienda && { 'tienda.tienda_alias': tienda }),
             ...(tueste && { tueste }),
+            ...(peso && { peso }),
             ...(origen && { origen }),
-            ...(precioMax && { precio: { $lte: precioMax } }),
-            ...(precioMin && { precio: { $gte: precioMin } })
-        };
+            ...(precioMin || precioMax ? { precio: {} } : {}),
+          };
+          
+          if (precioMin) filtros.precio.$gte = precioMin;
+          if (precioMax) filtros.precio.$lte = precioMax;
     
         const cafesdb = await collections.cafes
             .find(filtros)
