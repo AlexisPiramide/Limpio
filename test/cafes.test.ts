@@ -2,38 +2,18 @@ import request from "supertest";
 import app from "../app";
 import createMongoConnection from "../context/mongo.db";
 import { collections } from "../context/mongo.db";
+import { cafe1, cafe2 } from "./test.items";
 
 describe("API Cafes Tests", () => {
     beforeAll(async () => {
         await createMongoConnection();
         await collections.usuarios.deleteMany({});
         await collections.cafes.deleteMany({});
+        await collections.cafes.insertMany([cafe1, cafe2]);
     });
 
     beforeEach(async () => {
-        await collections.cafes.deleteMany({});
-        await collections.usuarios.deleteMany({});
-        await collections.cafes.insertMany([{
-            "nombre": "Cafe 1",
-            "tienda": {
-                "tienda_alias": "Carefour",
-                "tienda_id": "679363f4d9d6cc22f26a8afb"
-            },
-            "tueste": "Torrefacto",
-            "precio": 50,
-            "imagen": "Cafe5CarefourTorrefacto1134.png",
-            "nota": 4
-        },{
-            "nombre": "Cafe 2",
-            "tienda": {
-                "tienda_alias": "Carefour",
-                "tienda_id": "679363f4d9d6cc22f26a8afb"
-            },
-            "tueste": "Torrefacto",
-            "precio": 5,
-            "imagen": "Cafe4CarefourTorrefacto244.png",
-            "nota": 2.5
-        }]);
+        await collections.usuarios.deleteMany({});   
     });
 
     afterAll(async () => {
@@ -90,7 +70,7 @@ describe("API Cafes Tests", () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveLength(2);
     });
-    /*
+    
     it("POST and DELETE /api/cafes - Should allow the same user to insert and delete a cafe", async () => {
         
         const token = await doRegistro("tienda", "test", "test", "test");
@@ -126,7 +106,7 @@ describe("API Cafes Tests", () => {
         
         expect(getResponse.body).not.toContainEqual(newCafe);
     });
-    */
+
 });
 
 

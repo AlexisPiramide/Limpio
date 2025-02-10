@@ -77,7 +77,6 @@ router.put("/cesta", rejectAdmin, isAuth, async (req: Request, res: Response) =>
         const { nombre, tienda, tueste, imagen } = req.body.cafe;
         const tiendaApi: Admin = { tienda_alias: tienda.tienda_alias, tienda_id: tienda.tienda_id };
         const cafeApi: Cafe = { nombre, tienda: tiendaApi, tueste, imagen };
-
         const usuario: Usuario = await usuariousecases.modificarCesta(cafeApi, usuarioAPI, accion);
         handleResponseCestas(res, usuario);
     } catch (error) {

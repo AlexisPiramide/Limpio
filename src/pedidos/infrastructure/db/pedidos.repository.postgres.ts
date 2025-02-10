@@ -17,9 +17,7 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
                 JOIN linea_pedido ON pedidos.id = linea_pedido.pedido_id
                 WHERE pedidos.usuario = '${usuario.correo}'
             `;
-
             const result = await executeQuery(query);
-
             if (!result) {
                 throw new Error('Error con usuario.');
             }
@@ -156,7 +154,6 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
             }
     
             const pedidoId = pedidoResult[0].id;
-
             const values = lineaPedidos.map(lp => [
                 pedidoId,
                 lp.cafe,
@@ -186,7 +183,6 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
 
             return pedidodb;
         } catch (error) {
-            console.error('Error en createPedido:', error);
             throw new Error('Error creando el pedido');
         }
     }

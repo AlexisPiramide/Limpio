@@ -44,7 +44,6 @@ router.get("/:id",isAuth,rejectAdmin, async (req: Request, res: Response) => {
     try {
 
         const id = req.params.id
-        console.log(id)
         const usuario: Usuario = {
             alias: req.body.alias,
             correo: req.body.correo
@@ -75,7 +74,6 @@ router.post("/tramitar",isAuth,rejectAdmin, async (req: Request, res: Response) 
         };
 
         const pedido = await pedidousecases.createPedido(usuario);
-
         res.json(pedido);
     } catch (error) {
         if (error instanceof Error) {

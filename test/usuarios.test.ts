@@ -17,10 +17,6 @@ describe("API Usuarios Tests", () => {
         await collections.usuarios.deleteMany({});
     });
 
-    afterAll(async () => {
-        await collections.usuarios.deleteMany({});
-        await collections.cafes.deleteMany({});
-    });
 
     it("POST /api/usuarios/registro", async () => {
         const response = await request(app)

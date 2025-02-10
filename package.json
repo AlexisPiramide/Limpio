@@ -7,7 +7,7 @@
         "dev": "nodemon index.ts",
         "nuevo": "node genera-carpetas.js",
         "swagger": "node ./swagger.js",
-        "test": "NODE_ENV=test jest --coverage --coverageReporters=html"
+        "test": "NODE_ENV=test jest --coverage --runInBand --coverageReporters=html"
     },
     "author": "",
     "license": "ISC",

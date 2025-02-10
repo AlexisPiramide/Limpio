@@ -4,7 +4,7 @@ import cors from "cors";
 
 import usuarioRouter from "./src/usuarios/infraestructure/rest/usuarios.rest"
 import cafeRouter from "./src/cafes/infraestructure/rest/cafes.rest"
-//import notaRouter from "./src/notas/infraestructure/rest/notas.rest"
+import notaRouter from "./src/notas/infrastructure/rest/notas.rest"
 
 import pedidosRouter from "./src/pedidos/infrastructure/rest/pedidos.rest"
 
@@ -27,7 +27,7 @@ app.use(cors(options));
 
 app.use(`/api/usuarios`, usuarioRouter);
 app.use(`/api/cafes`, cafeRouter);
-//app.use(`/api/notas`, notaRouter);
+app.use(`/api/notas`, notaRouter);
 app.use(`/api/pedidos`,pedidosRouter);
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

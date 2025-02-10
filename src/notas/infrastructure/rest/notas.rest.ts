@@ -80,7 +80,7 @@ router.get("/valoradas",isAuth, async (req: Request, res: Response) => {
     };
 
     const notas: Nota[] = await notausecases.getValoraciones(usuarioAPI);
-    res.json({ notas });
+    res.json(notas);
 });
 
 router.get("/sinValorar",isAuth, async (req: Request, res: Response) => {
@@ -94,7 +94,7 @@ router.get("/sinValorar",isAuth, async (req: Request, res: Response) => {
     };
 
     const cafes: Cafe[] = await notausecases.getCafesSinValorar(usuarioAPI);
-    res.json({ cafes });
+    res.json(cafes);
 });
 
 
