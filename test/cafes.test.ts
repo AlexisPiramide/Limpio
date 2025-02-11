@@ -14,6 +14,7 @@ describe("API Cafes Tests", () => {
 
     beforeEach(async () => {
         await collections.usuarios.deleteMany({});   
+        
     });
 
     afterAll(async () => {
@@ -71,7 +72,7 @@ describe("API Cafes Tests", () => {
         expect(response.body).toHaveLength(2);
     });
     
-    it("POST and DELETE /api/cafes - Should allow the same user to insert and delete a cafe", async () => {
+    it("POST and DELETE /api/cafes ", async () => {
         
         const token = await doRegistro("tienda", "test", "test", "test");
         expect(token).toBeDefined();
@@ -102,12 +103,47 @@ describe("API Cafes Tests", () => {
 
         const getResponse = await request(app)
             .get(`/api/cafes/filtrados/1`)
-            .query({ nombre: newCafe.nombre });
+            .send({ nombre: newCafe.nombre });
         
         expect(getResponse.body).not.toContainEqual(newCafe);
     });
 
-});
+    it("PUT /api/cafes", async () => {
+        
+        const token = await doRegistro("tienda", "test", "test", "test");
+        expect(token).toBeDefined();
+        const insertar = await insertarCafe(token, cafe1);
+
+        const updateCafe = {
+            ...insertar,
+            precio: 100
+        };
+
+        const resutl = await request(app)
+            .put("/api/cafes")
+            .set('Authorization', `Bearer ${token}`)
+            .send(updateCafe);
+        
+        expect(resutl.status).toBe(200);
+        expect(resutl.body.precio).toBe(100);
+    });
+
+    it("GET /api/cafes/t/t/tienda", async () => {
+        
+        const token = await doRegistro("test-cafes-tienda", "test-cafes-tienda", "test-cafes-tienda", "test-cafes-tienda");
+        expect(token).toBeDefined();
+        await insertarCafe(token, cafe1);
+        await insertarCafe(token, cafe2);
+
+        const response = await request(app)
+            .get("/api/cafes/t/t/tienda")
+            .set('Authorization', `Bearer ${token}`);
+        
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveLength(2);
+        expect(response.body.map((cafe: any) => cafe.nombre)).toContain("Cafe 1");
+        expect(response.body.map((cafe: any) => cafe.nombre)).toContain("Cafe 2");
+    });
 
 
 const doRegistro = async (tienda_alias: string, email: string, password: string, nombre: string) => {
@@ -126,3 +162,18 @@ const doRegistro = async (tienda_alias: string, email: string, password: string,
 
     return response.body.token;
 };
+
+const insertarCafe = async (token: string, cafe: any) => {
+    const response = await request(app)
+        .post("/api/cafes")
+        .set('Authorization', `Bearer ${token}`)
+        .send(cafe);
+
+    if (response.status !== 200) {
+        throw new Error('Failed to insert cafe');
+    }
+
+    return response.body;
+};
+
+});

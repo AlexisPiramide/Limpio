@@ -36,4 +36,12 @@ export default class CafesUsecases {
     async modificarNotaCafe(cafe: Cafe): Promise<Cafe>{
         return this.cafesRepository.modificarNotaCafe(cafe);
     }
+
+    async modificarCafe(cafe: Cafe): Promise<Cafe>{
+        return this.cafesRepository.modificarCafe(cafe);
+    }
+
+    async getCafesTienda(tienda: string): Promise<Cafe[]>{
+        return this.cafesRepository.getCafesTienda(tienda);
+    }
 }

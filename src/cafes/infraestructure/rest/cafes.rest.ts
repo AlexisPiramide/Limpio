@@ -93,7 +93,44 @@ router.post("/",isAdmin, async (req: Request, res: Response) => {
     }
 })
 
-router.delete("/",isAuth, async (req: Request, res: Response) => {
+router.put("/",isAdmin, async (req: Request, res: Response) => {
+    /*
+    * #swagger.tags = ['Cafes']
+    * #swagger.description = 'Endpoint para modificar un cafe'
+    */
+
+    const {nombre,tueste,precio,imagen,peso,origen,nota} = req.body
+    
+    const tienda: Admin = {
+        tienda_alias: req.body.tienda_alias,
+        tienda_id: req.body.tienda_id
+    }
+    
+    const cafe : Cafe = {
+        nombre: nombre,
+        tienda: tienda,
+        tueste: tueste,
+        precio: precio,
+        origen: origen,
+        peso: peso,
+        imagen: imagen,
+        nota: nota
+    };
+
+    try {
+        const result = await cafeusecases.modificarCafe(cafe);
+        res.json(result);
+    } catch (error) {
+        
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "An unknown error occurred" });
+        }
+    }
+});
+
+router.delete("/",isAdmin, async (req: Request, res: Response) => {
     /*
     * #swagger.tags = ['Cafes']
     * #swagger.description = 'Endpoint para eliminar un cafe'
@@ -114,6 +151,26 @@ router.delete("/",isAuth, async (req: Request, res: Response) => {
     }
 });
 
+router.get("/t/t/tienda",isAdmin, async (req: Request, res: Response) => {
+    /*
+    * #swagger.tags = ['Cafes']
+    * #swagger.description = 'Endpoint para obtener cafes de una tienda'
+    */
 
+    const tienda = req.body.tienda_alias;
+
+    try {
+        const cafes: Cafe[] = await cafeusecases.getCafesTienda(tienda);
+        res.json(cafes);
+    } catch (error) {
+
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+
+            res.status(500).json({ error: "An unknown error occurred" });
+        }
+    }
+});
 
 export default router;

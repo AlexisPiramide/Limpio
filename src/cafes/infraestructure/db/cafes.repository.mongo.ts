@@ -96,5 +96,25 @@ export default class CafesRepositoryMongo implements cafesRepository {
     
         return cafesdb.map(mapCafe);
     }
+
+    async modificarCafe(cafe: Cafe): Promise<Cafe> {
+        try {
+            const result = await collections.cafes.updateOne({ nombre: cafe.nombre, tienda: cafe.tienda, tueste: cafe.tueste }, { $set: { precio: cafe.precio, origen: cafe.origen, peso: cafe.peso, imagen: cafe.imagen } });
+            if (!result.acknowledged) throw new Error("Error al modificar el café");
+            return cafe;
+        } catch (error) {
+            handleError(error, "Error al modificar el café");
+        }
+    }
+
+    async getCafesTienda(tienda: string): Promise<Cafe[]> {
+        try {
+            const cafesdb = await collections.cafes.find({ 'tienda.tienda_alias': tienda }).toArray();
+
+            return cafesdb.map(mapCafe);
+        } catch (error) {
+            handleError(error, "Error al buscar los cafés de la tienda");
+        }
+    }
 }
 
