@@ -35,10 +35,12 @@ export default class UsuariosRepositoryMongo implements UsuarioRepository {
     async login(usuario: Usuario): Promise<Usuario | Admin> {
         try {
             const { correo } = usuario;
+            console.log(correo);
             const usuarioDB = await collections.usuarios.findOne({ correo });
+            console.log(usuarioDB);
             if (!usuarioDB) throw new Error("Usuario/contraseña no es correcto");
             return usuarioDB.tienda_alias ? mapAdmin(usuarioDB) : mapUsuario(usuarioDB, true);
-        } catch (error) {
+        } catch (error) { 
             handleError(error, "Error al iniciar sesión");
         }
     }

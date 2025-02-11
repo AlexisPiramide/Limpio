@@ -33,14 +33,14 @@ def insert_tiendas(df, mongo_db):
     tiendas_unique = df[["Tienda"]].drop_duplicates().reset_index(drop=True)
 
     for _, row in tiendas_unique.iterrows():
+        tienda_alias = row["Tienda"].replace(" ", "").lower()
         tienda = {
-            "tienda_alias": row["Tienda"],
+            "tienda_alias": tienda_alias,
             "alias": row["Tienda"],
-            "correo": f"{row['Tienda']}@gmail.com",
-            # Contraseña hash para "1234"
-            "contraseña": "$2b$10$SzP2BSAbT1u9XcDuBF1Z2OKdHs8BUo8z95pXDKwTO.hHttDnOzrXW",
+            "correo": f"{tienda_alias}@gmail.com",
+            # Contraseña hash para "P12345*"
+            "password": "$2b$10$R0tdCh4prfLhXidA/JVAqu4fu6vne1ZfKLw3Uq6OZbfhz.0gwOfXi",
             "foto": "default.png",
-            "cafes": []
         }
         # Insertar tienda y almacenar el id
         result = usuarios_collection.insert_one(tienda)
@@ -62,15 +62,16 @@ def insert_data():
     cafes_batch = []
 
     for _, row in df.iterrows():
-        tienda_id = tienda_map.get(row["Tienda"])
+        tienda_id = tienda_map.get(row["Tienda"].replace(" ", "").lower())
         if tienda_id:
             cafe = {
                 "nombre": row["Nombre"],
                 "tueste": row["Tueste"],
                 "precio": row["Precio"],
+                "origen": row["Origen"],
                 "peso": row["Peso"],
                 "tienda": {
-                    "tienda_alias": row["Tienda"],
+                    "tienda_alias": row["Tienda"].replace(" ", "").lower(),
                     "tienda_id": tienda_id
                 }
             }
@@ -79,14 +80,7 @@ def insert_data():
     # Insertar cafes en lote para mayor eficiencia
     if cafes_batch:
         cafes_collection.insert_many(cafes_batch)
-        print(f"{len(cafes_batch)} cafes insertados correctamente.")
-
-        # Actualizar las tiendas con los cafes insertados
-        for cafe in cafes_batch:
-            mongo_db["usuarios"].update_many(
-                {"_id": cafe["tienda"]["tienda_id"]},
-                {"$push": {"cafes": cafe}}
-            )
+        print(f"{len(cafes_batch)} cafes insertados correctamente.")    
 
 if __name__ == "__main__":
     insert_data()

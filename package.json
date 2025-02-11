@@ -12,6 +12,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.744.0",
         "@types/jest": "^29.5.14",
         "@types/supertest": "^6.0.2",
         "bcrypt": "^5.1.1",

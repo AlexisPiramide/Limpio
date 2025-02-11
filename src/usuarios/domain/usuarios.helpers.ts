@@ -23,7 +23,6 @@ export function mapAdmin(usuarioDB: any) {
         tienda_alias: usuarioDB.tienda_alias,
         tienda_id: usuarioDB.tienda_id,
         password: usuarioDB.password,
-        cafes: usuarioDB.cafes,
     };
 }
 
@@ -72,7 +71,6 @@ export const handleResponseSesiones = (res: Response, usuario: Usuario | Admin |
             foto: usuario.foto,
             tienda_alias: usuario.tienda_alias,
             tienda_id: usuario.tienda_id,
-            cafes: usuario.cafes
         }, token });
     }else{
         return res.status(statusCode).json({ usuario: {
