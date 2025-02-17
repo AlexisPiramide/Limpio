@@ -40,9 +40,6 @@ export default class UsuariosUsecases {
 
     async updateUsuario(usuario: Usuario, datosCambiar: Usuario): Promise<Usuario> {
         if (datosCambiar.password) {datosCambiar.password = hash(datosCambiar.password);}
-        if(datosCambiar.foto)
-        datosCambiar.foto = await handleImageUpload(datosCambiar.foto, `${datosCambiar.alias || usuario.alias}`); 
-
         return this.usuariosRepository.updateUsuario(usuario, datosCambiar);
     }
 

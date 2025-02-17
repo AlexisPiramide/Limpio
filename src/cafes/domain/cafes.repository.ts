@@ -11,4 +11,7 @@ export default interface cafesRepository {
     eliminarCafe(cafe: Cafe): Promise<boolean>
     modificarNotaCafe(cafe: Cafe): Promise<Cafe>
     modificarCafe(cafe: Cafe): Promise<Cafe>
+    
+    getPaginas(): Promise<number>
+    getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>
 }

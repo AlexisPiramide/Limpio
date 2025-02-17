@@ -74,6 +74,7 @@ router.post("/tramitar",isAuth,rejectAdmin, async (req: Request, res: Response) 
         };
 
         const pedido = await pedidousecases.createPedido(usuario);
+        console.log(pedido,"pedido")
         res.json(pedido);
     } catch (error) {
         if (error instanceof Error) {

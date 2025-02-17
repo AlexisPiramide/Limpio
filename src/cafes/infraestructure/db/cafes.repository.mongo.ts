@@ -15,6 +15,39 @@ export default class CafesRepositoryMongo implements cafesRepository {
         }
     }
 
+    async getPaginas(): Promise<number> {
+        try {
+            const cafes = await collections.cafes.countDocuments({});
+            return Math.ceil(cafes / 20);
+        } catch (error) {
+            handleError(error, "Error al buscar los cafés");
+        }
+    }
+    
+    async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>{
+        try{
+            const filtros: any = {
+                ...(nombre && { nombre }),
+                ...(tienda && { 'tienda.tienda_alias': tienda }),
+                ...(tueste && { tueste }),
+                ...(peso && { peso }),
+                ...(origen && { origen }),
+                ...(precioMin || precioMax ? { precio: {} } : {}),
+              };
+              
+              if (precioMin) filtros.precio.$gte = precioMin;
+              if (precioMax) filtros.precio.$lte = precioMax;
+        
+            const cafesdb = await collections.cafes
+                .countDocuments(filtros)
+
+            return Math.ceil(cafesdb / 20);
+
+        }catch(error){
+            handleError(error, "Error al buscar los cafés");
+        }
+    }
+
     async getCafes(pagina: number): Promise<Cafe[]> {
         try {
             const cafes = await collections.cafes.find({}).skip(pagina * 20).limit(20).toArray();

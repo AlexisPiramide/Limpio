@@ -18,14 +18,6 @@ export default class CafesUsecases {
     }
 
     async insertarCafe(cafe: Cafe): Promise<Cafe>{
-        const nombreArchivo = handleImageUpload(cafe.imagen,cafe.nombre);
-        
-        if(!nombreArchivo){
-            throw new Error("Error al subir la imagen")
-        }
-
-        cafe.imagen = nombreArchivo;
-
         return this.cafesRepository.insertarCafe(cafe);
     }
 
@@ -43,5 +35,13 @@ export default class CafesUsecases {
 
     async getCafesTienda(tienda: string): Promise<Cafe[]>{
         return this.cafesRepository.getCafesTienda(tienda);
+    }
+
+    async getPaginas(): Promise<number>{
+        return this.cafesRepository.getPaginas();
+    }
+
+    async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>{
+        return this.cafesRepository.getPaginasFiltradas(nombre, tienda, tueste, origen,peso, precioMax, precioMin);
     }
 }

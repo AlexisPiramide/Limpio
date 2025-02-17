@@ -32,7 +32,7 @@ export function updateCesta(cesta: any[], cafe: any, accion: string) {
         if (accion === 'añadir') cafedb.cantidad++;
         else if (accion === 'eliminar') cafedb.cantidad > 1 ? cafedb.cantidad-- : cesta.splice(cesta.indexOf(cafedb), 1);
     } else if (accion === 'añadir') {
-        cesta.push({ nombre: cafe.nombre, tienda: cafe.tienda, tueste: cafe.tueste, imagen: cafe.imagen, cantidad: 1 });
+        cesta.push({ nombre: cafe.nombre, tienda: cafe.tienda, tueste: cafe.tueste, imagen: cafe.imagen, cantidad: 1, precio: cafe.precio, peso: cafe.peso });
     }
     return cesta;
 }
