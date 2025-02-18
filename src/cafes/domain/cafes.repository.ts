@@ -14,4 +14,5 @@ export default interface cafesRepository {
     
     getPaginas(): Promise<number>
     getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>
+    getTipos(): Promise<string[]>
 }

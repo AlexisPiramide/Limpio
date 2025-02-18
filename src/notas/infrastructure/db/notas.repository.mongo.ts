@@ -32,7 +32,7 @@ export default class NotasRepositoryMongo implements NotaRepository {
         const result = await collections.notas.find({ usuario: usuario }).toArray();
 
         if (result.length === 0) {
-            throw new Error("El usuario no tiene valoraciones.");
+            return [];
         }
     
         const notas: Nota[] = await Promise.all(result.map(async (nota) => {
@@ -43,7 +43,6 @@ export default class NotasRepositoryMongo implements NotaRepository {
                 nota: nota.nota,
             };
         }));
-    
         return notas;
     }
     
@@ -198,45 +197,38 @@ export default class NotasRepositoryMongo implements NotaRepository {
     }
 
     async getCafesSinValorar(usuario: Usuario): Promise<Cafe[]> {
-        const cafes: Cafe[] = [];
-        const cafesValorados = await collections.notas.find({ usuario: usuario }).toArray();
-        if (cafesValorados.length === 0) {
-           
-        }
+        // Obtener cafés valorados
+        const cafesValorados = new Set(
+            (await collections.notas.find({ usuario }).toArray())
+                .map(nota => `${nota.cafe.nombre}-${nota.cafe.tienda.tienda_alias}-${nota.cafe.tueste}`)
+        );
+    
+        // Obtener pedidos
         const pedidos = await pedidosusecases.getPedidos(usuario);
-
-        if (pedidos.length === 0) {
-            return [];
-        }
-        
-        pedidos.map(pedido => {
-            
-            pedido.pedido.map(cafe => {
-                cafesValorados.map(cafeValorado => {
-                    if (cafe.cafe !== cafeValorado.cafe.nombre) {
-                      
-                        const cafedb: any = cafeusecases.getCafe(cafe.cafe,cafe.tienda_alias, cafe.tueste);
-
-                        const cafeNoVotado : Cafe = {
-                            nombre: cafedb[0].nombre,
-                            tienda: cafedb[0].tienda,
-                            tueste: cafedb[0].tueste,
-                            peso: cafedb[0].peso,
-                            precio: cafedb[0].precio,
-                            imagen: cafedb[0].imagen
-                        }
-                        cafes.push(cafeNoVotado);
-                    }
-                });
-                
+        if (pedidos.length === 0) return [];
+    
+        // Recolectar cafés únicos de los pedidos
+        const cafesPedidos = new Map<string, Cafe>();
+    
+        for (const pedido of pedidos) {
+            for (const cafe of pedido.pedido) {
+                const clave = `${cafe.cafe}-${cafe.tienda_alias}-${cafe.tueste}`;
+                if (!cafesPedidos.has(clave)) {
+                    const cafedb = await cafeusecases.getCafe(cafe.cafe, cafe.tienda_alias, cafe.tueste);
+                    if (cafedb) cafesPedidos.set(clave, cafedb);
+                }
             }
-            )
+        }
+    
+        // Filtrar los cafés que ya han sido valorados
+        const cafesSinValorar = Array.from(cafesPedidos.values()).filter(cafe => {
+            const clave = `${cafe.nombre}-${cafe.tienda.tienda_alias}-${cafe.tueste}`;
+            return !cafesValorados.has(clave);
         });
-
-
-        return cafes;
-
+    
+        return cafesSinValorar;
     }
-
+    
+    
 }
 

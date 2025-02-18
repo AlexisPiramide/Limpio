@@ -40,8 +40,11 @@ router.post("/filtrados/:pagina", async (req: Request, res: Response) => {
     * #swagger.description = 'Endpoint para obtener cafes filtrados'
     */
 
-    const { nombre, tienda, tueste, origen,peso, precioMax, precioMin } = req.body;
-    
+    const { nombre, tienda, tueste, origen} = req.body;
+    const precioMax = Number(req.body.precioMax);
+    const precioMin = Number(req.body.precioMin);
+    const peso = Number(req.body.peso)*1000;
+    console.log(peso)
     let pagina = Number(req.params.pagina) || 0;
     try {
         const cafes: Cafe[] = await cafeusecases.cafesFiltrados(nombre,tienda,tueste,origen,peso,precioMax,precioMin,pagina);
@@ -207,11 +210,34 @@ router.get("/t/t/paginas",async (req: Request, res: Response) => {
 
 router.post("/t/t/paginas/filtradas",async (req: Request, res: Response) => {
     
-    const { nombre, tienda, tueste, origen,peso, precioMax, precioMin } = req.body;
-    
+    const { nombre, tienda, tueste, origen} = req.body;
+
+    const precioMax = Number(req.body.precioMax);
+    const precioMin = Number(req.body.precioMin);
+    const peso = Number(req.body.peso)*1000;
+
     try {
         const paginas = await cafeusecases.getPaginasFiltradas(nombre,tienda,tueste,origen,peso,precioMax,precioMin);
         res.json(paginas);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "An unknown error occurred" });
+        }
+    }
+});
+
+
+router.get("/c/c/c/tipos",async (req: Request, res: Response) => {
+    /*
+    * #swagger.tags = ['Cafes']
+    * #swagger.description = 'Endpoint para obtener los tipos de cafe'
+    */
+
+    try {
+        const tipos = await cafeusecases.getTipos();
+        res.json(tipos);
     } catch (error) {
         if (error instanceof Error) {
             res.status(500).json({ error: error.message });

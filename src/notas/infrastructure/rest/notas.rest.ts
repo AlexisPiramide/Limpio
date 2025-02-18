@@ -18,7 +18,7 @@ const router = express.Router();
 router.get("/valorables",isAuth, async (req: Request, res: Response) => {
     /*
     * #swagger.tags = ['Notas']
-    * #swagger.description = 'Endpoint para obtener las valoraciones de un usuario'
+    * #swagger.description = 'Endpoint para obtener los cafes valorables de un usuario'
     */
 
     const { alias,correo } = req.body;
@@ -27,10 +27,19 @@ router.get("/valorables",isAuth, async (req: Request, res: Response) => {
         correo,
     };
 
-    const notas: Nota[] = await notausecases.getValoraciones(usuarioAPI);
-    const cafes: Cafe[] = await notausecases.getCafesSinValorar(usuarioAPI);
-
-    res.json({ "notas":notas,"cafes":cafes });
+    console.log(usuarioAPI)
+    try{
+    
+        const notas: Nota[] = await notausecases.getValoraciones(usuarioAPI);
+        console.log(notas.length,"estas son las notas")
+        const cafes: Cafe[] = await notausecases.getCafesSinValorar(usuarioAPI);
+        console.log(cafes.length,"estos son los cafes")
+        res.json({ "notas":notas,"cafes":cafes });
+    }
+    catch(error){
+       console.log(error)
+    }
+    
 });
 
 router.put("/valorar",isAuth, async (req: Request, res: Response) => {

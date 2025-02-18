@@ -44,4 +44,8 @@ export default class CafesUsecases {
     async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>{
         return this.cafesRepository.getPaginasFiltradas(nombre, tienda, tueste, origen,peso, precioMax, precioMin);
     }
+
+    async getTipos(): Promise<string[]>{
+        return this.cafesRepository.getTipos();
+    }
 }

@@ -4,10 +4,13 @@ import cafesRepository from '../../domain/cafes.repository';
 import { mapCafe,handleError } from '../../domain/cafes.helpers';
 
 export default class CafesRepositoryMongo implements cafesRepository {
-  
+    
     async getCafe(nombre: string, tienda: string, tueste: string): Promise<Cafe> {
         try {
-            const cafe = await collections.cafes.findOne({ nombre, tienda, tueste });
+
+            console.log(nombre, tienda, tueste,"intentando");
+            const cafe = await collections.cafes.findOne({ nombre: nombre, "tienda.tienda_alias": tienda, tueste: tueste });
+            console.log(cafe);
             if (!cafe) throw new Error("Café no encontrado");
             return mapCafe(cafe);
         } catch (error) {
@@ -37,7 +40,7 @@ export default class CafesRepositoryMongo implements cafesRepository {
               
               if (precioMin) filtros.precio.$gte = precioMin;
               if (precioMax) filtros.precio.$lte = precioMax;
-        
+              console.log(filtros);
             const cafesdb = await collections.cafes
                 .countDocuments(filtros)
 
@@ -117,10 +120,10 @@ export default class CafesRepositoryMongo implements cafesRepository {
             ...(origen && { origen }),
             ...(precioMin || precioMax ? { precio: {} } : {}),
           };
-          
+        
           if (precioMin) filtros.precio.$gte = precioMin;
           if (precioMax) filtros.precio.$lte = precioMax;
-    
+          console.log(filtros);
         const cafesdb = await collections.cafes
             .find(filtros)
             .skip(pagina * 20)
@@ -149,5 +152,15 @@ export default class CafesRepositoryMongo implements cafesRepository {
             handleError(error, "Error al buscar los cafés de la tienda");
         }
     }
+
+    async getTipos(): Promise<string[]> {
+        try {
+            const cafesdb = await collections.cafes.distinct("tueste");
+            return cafesdb;
+        }catch (error) {
+            handleError(error, "Error al buscar los tipos de café");
+        }
+    }
+  
 }
 
