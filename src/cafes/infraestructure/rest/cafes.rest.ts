@@ -47,7 +47,6 @@ router.post("/filtrados/:pagina", async (req: Request, res: Response) => {
     let pagina = Number(req.params.pagina) || 0;
     const porNota: boolean = req.body.porNota;
 
-    console.log(porNota);
     try {
         const cafes: Cafe[] = await cafeusecases.cafesFiltrados(nombre,tienda,tueste,origen,peso,precioMax,precioMin,pagina,porNota);
         res.json(cafes);
