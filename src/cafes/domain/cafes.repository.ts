@@ -4,7 +4,7 @@ export default interface cafesRepository {
     /*Recibir cafes*/
     getCafe(nombre:string, tienda: string, tueste: string): Promise<Cafe>
     getCafes(pagina:number):Promise<Cafe[]>
-    cafesFiltrados(nombre: string, tienda: string, tueste: string,origen:string,peso:number,precioMax:number,precioMin:number,pagina:number): Promise<Cafe[]>
+    cafesFiltrados(nombre: string, tienda: string, tueste: string,origen:string,peso:number,precioMax:number,precioMin:number,pagina:number,porNota:boolean): Promise<Cafe[]>
     getCafesTienda(tienda: string,pagina:Number): Promise<Cafe[]>
     /*Insertar, eliminar y modificar cafes*/
     insertarCafe(cafe: Cafe): Promise<Cafe>
@@ -13,7 +13,7 @@ export default interface cafesRepository {
     modificarCafe(cafe: Cafe, datoscambiar: any): Promise<Cafe>
     
     getPaginas(): Promise<number>
-    getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>
+    getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number,porNota:boolean): Promise<number>
     getTipos(): Promise<string[]>
     getPaginasTienda(tienda: string): Promise<number>
 }

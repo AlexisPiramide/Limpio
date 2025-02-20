@@ -45,8 +45,11 @@ router.post("/filtrados/:pagina", async (req: Request, res: Response) => {
     const precioMin = Number(req.body.precioMin);
     const peso = Number(req.body.peso)*1000;
     let pagina = Number(req.params.pagina) || 0;
+    const porNota: boolean = req.body.porNota;
+
+    console.log(porNota);
     try {
-        const cafes: Cafe[] = await cafeusecases.cafesFiltrados(nombre,tienda,tueste,origen,peso,precioMax,precioMin,pagina);
+        const cafes: Cafe[] = await cafeusecases.cafesFiltrados(nombre,tienda,tueste,origen,peso,precioMax,precioMin,pagina,porNota);
         res.json(cafes);
     } catch (error) {
         if (error instanceof Error) {
@@ -260,8 +263,9 @@ router.post("/total/cafes/paginas/filtradas",async (req: Request, res: Response)
     const precioMin = Number(req.body.precioMin);
     const peso = Number(req.body.peso)*1000;
 
+    const porNota: boolean = req.body.porNota;
     try {
-        const paginas = await cafeusecases.getPaginasFiltradas(nombre,tienda,tueste,origen,peso,precioMax,precioMin);
+        const paginas = await cafeusecases.getPaginasFiltradas(nombre,tienda,tueste,origen,peso,precioMax,precioMin,porNota);
         res.json(paginas);
     } catch (error) {
         if (error instanceof Error) {

@@ -13,8 +13,8 @@ export default class CafesUsecases {
         return this.cafesRepository.getCafe(nombre,tienda,tueste);
     }
 
-    async cafesFiltrados(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number, pagina: number): Promise<Cafe[]>{
-        return this.cafesRepository.cafesFiltrados(nombre, tienda, tueste, origen,peso, precioMax, precioMin, pagina);
+    async cafesFiltrados(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number, pagina: number,porNota:boolean): Promise<Cafe[]>{
+        return this.cafesRepository.cafesFiltrados(nombre, tienda, tueste, origen,peso, precioMax, precioMin, pagina,porNota);
     }
 
     async insertarCafe(cafe: Cafe): Promise<Cafe>{
@@ -41,8 +41,8 @@ export default class CafesUsecases {
         return this.cafesRepository.getPaginas();
     }
 
-    async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>{
-        return this.cafesRepository.getPaginasFiltradas(nombre, tienda, tueste, origen,peso, precioMax, precioMin);
+    async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number,porNota:boolean): Promise<number>{
+        return this.cafesRepository.getPaginasFiltradas(nombre, tienda, tueste, origen,peso, precioMax, precioMin,porNota);
     }
 
     async getTipos(): Promise<string[]>{

@@ -26,7 +26,7 @@ export default class CafesRepositoryMongo implements cafesRepository {
         }
     }
     
-    async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number): Promise<number>{
+    async getPaginasFiltradas(nombre: string, tienda: string, tueste: string, origen: string,peso:number, precioMax: number, precioMin: number,porNota:boolean): Promise<number>{
         try{
             const filtros: any = {
                 ...(nombre && { nombre }),
@@ -47,6 +47,31 @@ export default class CafesRepositoryMongo implements cafesRepository {
         }catch(error){
             handleError(error, "Error al buscar los cafés");
         }
+    }
+
+    async cafesFiltrados(nombre: string, tienda: string, tueste: string, origen: string, peso: number, precioMax: number, precioMin: number, pagina: number, porNota: boolean): Promise<Cafe[]> {
+        const filtros: any = {
+            ...(nombre && { nombre }),
+            ...(tienda && { 'tienda.tienda_alias': tienda }),
+            ...(tueste && { tueste }),
+            ...(peso && { peso }),
+            ...(origen && { origen }),
+            ...(precioMin || precioMax ? { precio: {} } : {}),
+        };
+    
+        if (precioMin) filtros.precio.$gte = precioMin;
+        if (precioMax) filtros.precio.$lte = precioMax;
+    
+        const ordenamiento: any = porNota ? { nota: -1 } : {};
+    
+        const cafesdb = await collections.cafes
+            .find(filtros)
+            .sort(ordenamiento)
+            .skip(pagina * 20)
+            .limit(20)
+            .toArray();
+    
+        return cafesdb.map(mapCafe);
     }
 
     async getCafes(pagina: number): Promise<Cafe[]> {
@@ -103,26 +128,7 @@ export default class CafesRepositoryMongo implements cafesRepository {
         }
     }
 
-    async cafesFiltrados(nombre: string, tienda: string, tueste: string,origen:string,peso:number,precioMax:number,precioMin:number,pagina:number): Promise<Cafe[]>{
-        const filtros: any = {
-            ...(nombre && { nombre }),
-            ...(tienda && { 'tienda.tienda_alias': tienda }),
-            ...(tueste && { tueste }),
-            ...(peso && { peso }),
-            ...(origen && { origen }),
-            ...(precioMin || precioMax ? { precio: {} } : {}),
-          };
-        
-          if (precioMin) filtros.precio.$gte = precioMin;
-          if (precioMax) filtros.precio.$lte = precioMax;
-        const cafesdb = await collections.cafes
-            .find(filtros)
-            .skip(pagina * 20)
-            .limit(20)
-            .toArray();
-    
-        return cafesdb.map(mapCafe);
-    }
+   
 
     async modificarCafe(cafe: Cafe, datoscambiar: any): Promise<Cafe> {
         try {
