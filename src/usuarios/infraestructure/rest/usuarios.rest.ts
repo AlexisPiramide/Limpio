@@ -47,6 +47,7 @@ router.post("/registro/admin", /*isAdmin,*/ async (req: Request, res: Response) 
     try {
         const usuarioAPI = nuevoUsuarioAPI(req, true);
         const usuario = await usuariousecases.registro(usuarioAPI); 
+        
         handleResponseSesiones(res, usuario);
     } catch (error) {
         res.status(500).json({ mensaje: "Error en el servidor", error });

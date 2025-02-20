@@ -56,12 +56,15 @@ def insert_data():
     mongo_db = connect_mongo()
     cafes_collection = mongo_db[MONGO_CONFIG["collection"]]
 
+    # Eliminar filas duplicadas basándose solo en las columnas que no sean 'Precio' ni 'Peso'
+    df_unique = df.drop_duplicates(subset=["Tienda", "Nombre", "Tueste", "Origen"]).reset_index(drop=True)
+
     # Insertar tiendas primero y obtener el mapeo de alias a IDs
     tienda_map = insert_tiendas(df, mongo_db)
 
     cafes_batch = []
 
-    for _, row in df.iterrows():
+    for _, row in df_unique.iterrows():
         tienda_id = tienda_map.get(row["Tienda"].replace(" ", "").lower())
         if tienda_id:
             cafe = {
@@ -73,7 +76,8 @@ def insert_data():
                 "tienda": {
                     "tienda_alias": row["Tienda"].replace(" ", "").lower(),
                     "tienda_id": tienda_id
-                }
+                },
+                "nota": 0
             }
             cafes_batch.append(cafe)
 

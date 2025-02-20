@@ -21,7 +21,7 @@ export function mapAdmin(usuarioDB: any) {
         correo: usuarioDB.correo,
         foto: usuarioDB.foto,
         tienda_alias: usuarioDB.tienda_alias,
-        tienda_id: usuarioDB.tienda_id,
+        tienda_id: usuarioDB._id,
         password: usuarioDB.password,
     };
 }

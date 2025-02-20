@@ -35,7 +35,8 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
                             alias: usuario.alias,
                             correo: usuario.correo
                         },
-                        pedido: []
+                        pedido: [],
+                        direccion: row.direccion
                     };
                 }
 
@@ -79,7 +80,8 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
                     alias: usuario.alias,
                     correo: usuario.correo
                 },
-                pedido: []
+                pedido: [],
+                direccion: result[0].direccion
             };
 
             result.forEach((row: any) => {
@@ -99,7 +101,7 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
         }
     }
 
-    async createPedido(usuario: Usuario): Promise<Pedido> {
+    async createPedido(usuario: Usuario,direccion:string): Promise<Pedido> {
         try {
             const usuarioDB = await collections.usuarios.findOne({ correo: usuario.correo });
     
@@ -140,14 +142,15 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
                     alias: usuario.alias,
                     correo: usuario.correo
                 },
-                pedido: lineaPedidos
+                pedido: lineaPedidos,
+                direccion: direccion
             };
     
             const query = `
-                INSERT INTO pedidos (fecha, usuario) 
-                VALUES ($1, $2) RETURNING id
+                INSERT INTO pedidos (fecha, usuario, direccion) 
+                VALUES ($1, $2, $3) RETURNING id
             `;
-            const pedidoResult :any = await executeQuery(query, [pedido.fecha, pedido.usuario.correo]);
+            const pedidoResult :any = await executeQuery(query, [pedido.fecha, pedido.usuario.correo, pedido.direccion]);
     
             if (!pedidoResult || !pedidoResult[0]) {
                 throw new Error('Error creando pedido en la base de datos');
@@ -178,7 +181,8 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
                 id: pedidoId,
                 fecha: pedido.fecha,
                 usuario: pedido.usuario,
-                pedido: lineaPedidos
+                pedido: lineaPedidos,
+                direccion: pedido.direccion
             };
 
             return pedidodb;
@@ -186,5 +190,54 @@ export default class PedidosRepositoryPostgres implements PedidoRepository {
             throw new Error('Error creando el pedido');
         }
     }
+
+    async getPedidosAdmin(tienda:string): Promise<Pedido[]> {
+
+        try {
+            const query = `  
+            SELECT pedidos.*, linea_pedido.*
+            FROM pedidos
+            JOIN linea_pedido ON pedidos.id = linea_pedido.pedido_id
+            WHERE linea_pedido.tienda_alias = $1
+            `;
+             
+            const result = await executeQuery(query, [tienda]);
+            if (!result) {
+            throw new Error('Error con tienda.');
+            }
+
+            const pedidosMap: { [key: string]: Pedido } = {};
+
+            result.forEach((row: any) => {
+            if (!pedidosMap[row.pedido_id]) {
+                pedidosMap[row.pedido_id] = {
+                id: row.pedido_id,
+                fecha: row.fecha,
+                usuario: {
+                    id: row.usuario,
+                    alias: '',
+                    correo: row.usuario
+                },
+                pedido: [],
+                direccion: row.direccion
+                };
+            }
+
+            pedidosMap[row.pedido_id].pedido.push({
+                cafe: row.cafe,
+                tueste: row.tueste,
+                tienda_alias: row.tienda_alias,
+                tienda_id: row.tienda_id,
+                cantidad: row.cantidad,
+                precio: row.precio
+            });
+            });
+
+            const pedidos: Pedido[] = Object.values(pedidosMap);
+            return pedidos;
+        } catch (error) {
+            throw new Error('Error obteniendo pedidos');
+        }
     
+    }
 }

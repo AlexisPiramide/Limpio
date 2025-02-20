@@ -7,6 +7,6 @@ export default interface Cafe {
     precio?: number;
     origen?: string;
     peso?: number;
-    imagen?: string | File;
+    imagen?: string;
     nota?: number;
 }

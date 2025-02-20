@@ -22,9 +22,13 @@ export default class PedidosUsecases {
         return this.pedidosRepository.getPedido(usuario,id);
     }
 
+    async getPedidosAdmin(tienda:string): Promise<Pedido[]> {
+        return this.pedidosRepository.getPedidosAdmin(tienda);
+    }
 
-    async createPedido(usuario: Usuario): Promise<Pedido> {
-        const result = this.pedidosRepository.createPedido(usuario);
+
+    async createPedido(usuario: Usuario,direccion:string): Promise<Pedido> {
+        const result = this.pedidosRepository.createPedido(usuario,direccion);
 
         if(!result){throw new Error('Error creando pedido')}
         else{

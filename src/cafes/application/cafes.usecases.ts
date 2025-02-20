@@ -29,12 +29,12 @@ export default class CafesUsecases {
         return this.cafesRepository.modificarNotaCafe(cafe);
     }
 
-    async modificarCafe(cafe: Cafe): Promise<Cafe>{
-        return this.cafesRepository.modificarCafe(cafe);
+    async modificarCafe(cafe: Cafe,datoscambiar: any): Promise<Cafe>{
+        return this.cafesRepository.modificarCafe(cafe,datoscambiar);
     }
 
-    async getCafesTienda(tienda: string): Promise<Cafe[]>{
-        return this.cafesRepository.getCafesTienda(tienda);
+    async getCafesTienda(tienda: string,pagina: Number): Promise<Cafe[]>{
+        return this.cafesRepository.getCafesTienda(tienda,pagina);
     }
 
     async getPaginas(): Promise<number>{
@@ -47,5 +47,9 @@ export default class CafesUsecases {
 
     async getTipos(): Promise<string[]>{
         return this.cafesRepository.getTipos();
+    }
+
+    async getPaginasTienda(tienda: string): Promise<number>{
+        return this.cafesRepository.getPaginasTienda(tienda);
     }
 }

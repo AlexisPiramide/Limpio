@@ -8,9 +8,8 @@ export default class CafesRepositoryMongo implements cafesRepository {
     async getCafe(nombre: string, tienda: string, tueste: string): Promise<Cafe> {
         try {
 
-            console.log(nombre, tienda, tueste,"intentando");
+
             const cafe = await collections.cafes.findOne({ nombre: nombre, "tienda.tienda_alias": tienda, tueste: tueste });
-            console.log(cafe);
             if (!cafe) throw new Error("Café no encontrado");
             return mapCafe(cafe);
         } catch (error) {
@@ -40,7 +39,6 @@ export default class CafesRepositoryMongo implements cafesRepository {
               
               if (precioMin) filtros.precio.$gte = precioMin;
               if (precioMax) filtros.precio.$lte = precioMax;
-              console.log(filtros);
             const cafesdb = await collections.cafes
                 .countDocuments(filtros)
 
@@ -63,17 +61,10 @@ export default class CafesRepositoryMongo implements cafesRepository {
     async insertarCafe(cafe: Cafe): Promise<Cafe> {
         try {
             const result = await collections.cafes.insertOne(cafe);
-
+            
             const cafedb = await collections.cafes.findOne(result.insertedId);
             if (!result.acknowledged) throw new Error("Error al insertar el café");
-            const resultdb = await collections.usuarios.findOne({tienda_alias: cafe.tienda.tienda_alias});
-
-            if(resultdb){
-                const cafes = resultdb.cafes;
-                cafes.push(mapCafe(cafedb));
-                await collections.usuarios.updateOne({tienda_alias: cafe.tienda.tienda_alias}, { $set: { cafes } });
-                return cafe;
-            }
+            return mapCafe(cafedb);
           
         } catch (error) {
             handleError(error, "Error al insertar el café");
@@ -82,7 +73,8 @@ export default class CafesRepositoryMongo implements cafesRepository {
 
     async eliminarCafe(cafe: Cafe): Promise<boolean> {
         try {
-            const result = await collections.cafes.deleteOne({ nombre: cafe.nombre, tienda: cafe.tienda, tueste: cafe.tueste });
+            const result = await collections.cafes.deleteOne({ nombre: cafe.nombre,"tienda.tienda_alias" : cafe.tienda.tienda_alias, tueste: cafe.tueste, origen: cafe.origen, peso: cafe.peso, precio: cafe.precio });
+
             return result.deletedCount > 0;
         } catch (error) {
             handleError(error, "Error al eliminar el café");
@@ -103,8 +95,8 @@ export default class CafesRepositoryMongo implements cafesRepository {
 
     async modificarNotaCafe(cafe: Cafe): Promise<Cafe> {
         try {
-            const result = await collections.cafes.updateOne({ nombre: cafe.nombre, tienda: cafe.tienda, tueste: cafe.tueste }, { $set: { nota: cafe.nota } });
-            if (!result.acknowledged) throw new Error("Error al modificar la nota del café");
+            const result = await collections.cafes.updateOne({ nombre: cafe.nombre, "tienda.tienda_alias": cafe.tienda.tienda_alias, tueste: cafe.tueste }, { $set: { nota: cafe.nota } });
+            if (result.modifiedCount === 0) throw new Error("Error al modificar la nota del café");
             return cafe;
         } catch (error) {
             handleError(error, "Error al modificar la nota del café");
@@ -123,7 +115,6 @@ export default class CafesRepositoryMongo implements cafesRepository {
         
           if (precioMin) filtros.precio.$gte = precioMin;
           if (precioMax) filtros.precio.$lte = precioMax;
-          console.log(filtros);
         const cafesdb = await collections.cafes
             .find(filtros)
             .skip(pagina * 20)
@@ -133,19 +124,55 @@ export default class CafesRepositoryMongo implements cafesRepository {
         return cafesdb.map(mapCafe);
     }
 
-    async modificarCafe(cafe: Cafe): Promise<Cafe> {
+    async modificarCafe(cafe: Cafe, datoscambiar: any): Promise<Cafe> {
         try {
-            const result = await collections.cafes.updateOne({ nombre: cafe.nombre, tienda: cafe.tienda, tueste: cafe.tueste }, { $set: { precio: cafe.precio, origen: cafe.origen, peso: cafe.peso, imagen: cafe.imagen } });
-            if (!result.acknowledged) throw new Error("Error al modificar el café");
-            return cafe;
+            // Check if the document exists first
+            const existingCafe = await collections.cafes.findOne({
+                nombre: cafe.nombre,
+                "tienda.tienda_alias": cafe.tienda.tienda_alias,
+                tueste: cafe.tueste,
+                origen: cafe.origen,
+                peso: cafe.peso,
+                precio: cafe.precio,
+            });
+    
+            if (!existingCafe) {
+                throw new Error("Café no encontrado");
+            }
+    
+        
+            const result = await collections.cafes.findOneAndUpdate(
+                { nombre: cafe.nombre, "tienda.tienda_alias": cafe.tienda.tienda_alias, tueste: cafe.tueste },
+                {
+                    $set: {
+                        nombre: datoscambiar.nombre,
+                        tueste: datoscambiar.tueste,
+                        precio: datoscambiar.precio,
+                        origen: datoscambiar.origen,
+                        peso: datoscambiar.peso,
+                        imagen: datoscambiar.imagen
+                    }
+                }
+            );
+            
+            if (!result) throw new Error("Error al modificar el café");
+            
+            const notas = await collections.notas.find({ "cafe.nombre": cafe.nombre, "cafe.tienda.tienda_alias": cafe.tienda.tienda_alias, "cafe.tueste":cafe.tueste}).toArray();
+
+            notas.forEach(async cafe => {
+                await collections.notas.updateOne({ _id: cafe._id }, { $set: { cafe: { nombre: datoscambiar.nombre, tienda: datoscambiar.tienda, tueste: datoscambiar.tueste, precio: datoscambiar.precio, peso: datoscambiar.peso, imagen: datoscambiar.imagen } } });
+            });
+
+            return { ...cafe, ...datoscambiar };
         } catch (error) {
             handleError(error, "Error al modificar el café");
         }
     }
+    
 
-    async getCafesTienda(tienda: string): Promise<Cafe[]> {
+    async getCafesTienda(tienda: string,pagina:number): Promise<Cafe[]> {
         try {
-            const cafesdb = await collections.cafes.find({ 'tienda.tienda_alias': tienda }).toArray();
+            const cafesdb = await collections.cafes.find({ 'tienda.tienda_alias': tienda }).skip(pagina * 20).limit(20).toArray();
 
             return cafesdb.map(mapCafe);
         } catch (error) {
@@ -159,6 +186,15 @@ export default class CafesRepositoryMongo implements cafesRepository {
             return cafesdb;
         }catch (error) {
             handleError(error, "Error al buscar los tipos de café");
+        }
+    }
+
+    async getPaginasTienda(tienda: string): Promise<number>{
+        try {
+            const cafes = await collections.cafes.countDocuments({ 'tienda.tienda_alias': tienda });
+            return Math.ceil(cafes / 20);
+        } catch (error) {
+            handleError(error, "Error al buscar los cafés de la tienda");
         }
     }
   

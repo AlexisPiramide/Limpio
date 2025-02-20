@@ -5,4 +5,5 @@ export default interface Pedido {
     fecha: string;
     usuario: Usuario;
     pedido: lineaPedido[];
+    direccion: string;
 }

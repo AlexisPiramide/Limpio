@@ -4,5 +4,6 @@ export default interface pedidosRepository {
     getPedidos(usuario: Usuario): Promise<Pedido[]>;
     getPedido(usuario: Usuario,id: string): Promise<Pedido>;
 
-    createPedido(usuario: Usuario): Promise<Pedido>;
+    createPedido(usuario: Usuario,direccion:string): Promise<Pedido>;
+    getPedidosAdmin(tienda:string): Promise<Pedido[]>;
 }

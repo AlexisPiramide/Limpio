@@ -52,12 +52,15 @@ const isAdmin = (req: Request, response: Response, next: NextFunction) => {
       const authHeader = req.headers["authorization"];
         const token: string | undefined = authHeader && authHeader.split(" ")[1];
         if (token) {
+		
           const decoded: any = jwt.verify(token, SECRET_KEY);
           req.body.alias = decoded.alias;
           req.body.correo = decoded.correo;
-		  if(decoded.tienda_alias && decoded.tienda_id){
-			req.body.tienda_id = decoded.tienda_id;
+		  if(decoded.tienda_alias){
 			req.body.tienda_alias = decoded.tienda_alias;
+			if(decoded.tienda_id){
+				req.body.tienda_id = decoded.tienda_id;
+			}
 			next();
 		  }else {
 			response.status(401).json({ mensaje: "No autorizado" });

@@ -39,7 +39,18 @@ export default class NotasRepositoryMongo implements NotaRepository {
             
             return {
                 usuario: nota.usuario,
-                cafe: nota.cafe,
+                cafe: {
+                    nombre: nota.cafe.nombre,
+                    tienda: {
+                        tienda_alias: nota.cafe.tienda.tienda_alias,
+                        tienda_id: nota.cafe.tienda.tienda_id
+                    },
+                    tueste: nota.cafe.tueste,
+                    precio: nota.cafe.precio,
+                    origen: nota.cafe.origen,
+                    peso: nota.cafe.peso,
+                    imagen: nota.cafe.imagen
+                },
                 nota: nota.nota,
             };
         }));
@@ -60,6 +71,7 @@ export default class NotasRepositoryMongo implements NotaRepository {
             tienda: tienda,
             tueste: cafe.tueste,
             precio: cafe.precio,
+            origen: cafe.origen,
             peso: cafe.peso,
             imagen: cafe.imagen
         }
@@ -92,6 +104,7 @@ export default class NotasRepositoryMongo implements NotaRepository {
                 nombre: resultdb.cafe.nombre,
                 tienda: tiendadb,
                 tueste: resultdb.cafe.tueste,
+                origen: resultdb.cafe.origen,
                 precio: resultdb.cafe.precio,
                 peso: resultdb.cafe.peso,
                 imagen: resultdb.cafe.imagen
@@ -108,31 +121,20 @@ export default class NotasRepositoryMongo implements NotaRepository {
         }
     }
     
-    async modificarValoracion(cafe: Cafe, usuario: Usuario, nota: number): Promise<Nota> {
-        
-        const usuariopost : Usuario = {
-            alias : usuario.alias,
-            correo : usuario.correo
-        }
-
-        const tienda : Admin = {tienda_alias: cafe.tienda.tienda_alias, tienda_id: cafe.tienda.tienda_id}
-
-        const cafepost : Cafe = {
-            nombre: cafe.nombre,
-            tienda: tienda,
-            tueste: cafe.tueste,
-            precio: cafe.precio,
-            peso: cafe.peso,
-            imagen: cafe.imagen
-        }
+    async modificarValoracion(comprobarNota:any, nota: number): Promise<Nota> {
+        console.log(comprobarNota);
         const updatedRating = await collections.notas.findOneAndUpdate({
-            usuario: usuariopost,
-            cafe: cafepost
+            ...comprobarNota
         }, 
-        { $set: { nota: nota } },
+        { $set: { nota } },
         { returnDocument: "after" });
+        console.log(updatedRating,"testo");
+         
+        if (!updatedRating) {
+            throw new Error("No se pudo modificar la nota");
+        }
 
-        
+
         if(updatedRating){
             const usuariodb : Usuario = {
                 alias : updatedRating.usuario.alias,
@@ -185,6 +187,7 @@ export default class NotasRepositoryMongo implements NotaRepository {
             nombre: cafe.nombre,
             tienda: tienda,
             tueste: cafe.tueste,
+            origen: cafe.origen,
             peso: cafe.peso,
             precio: cafe.precio,
             imagen: cafe.imagen,

@@ -20,34 +20,33 @@ export default class NotasUsecases {
     }
     
     private async comprobarNota(cafe: Cafe, usuario: Usuario, nota: number): Promise<Nota> {
-        const usuariopost: Usuario = {
-            alias: usuario.alias,
-            correo: usuario.correo,
-        };
-        
-        const cafepost: Cafe = {
+
+        const comprobarSiExiste = await collections.cafes.findOne({
             nombre: cafe.nombre,
-            tienda: cafe.tienda,
+            "tienda.tienda_alias": cafe.tienda.tienda_alias,
             tueste: cafe.tueste,
+            peso: cafe.peso,
             precio: cafe.precio,
-            imagen: cafe.imagen,
-        };
-
-        const comprobarSiExiste = await collections.cafes.findOne(cafepost);
-
+        });
+      
         if(!comprobarSiExiste){
             throw new Error("El café no existe");
         }
 
         const comprobarNota = {
-            usuario: usuariopost,
-            cafe: cafepost,
+            "usuario.correo": usuario.correo,
+            "cafe.nombre": cafe.nombre,
+            "cafe.tienda.tienda_alias": cafe.tienda.tienda_alias,
+            "cafe.tueste": cafe.tueste,
+            "cafe.precio": cafe.precio,
+            "cafe.peso": cafe.peso,
         };
 
         const comprobacion = await collections.notas.findOne(comprobarNota);
+
         if (comprobacion) {
             
-            const notaModificada =  await this.notasRepository.modificarValoracion(cafe, usuario, nota);
+            const notaModificada =  await this.notasRepository.modificarValoracion(comprobarNota, nota);
 
             const result = await this.notasRepository.modificarTotal(cafe);
             if(result){return notaModificada;}else{throw new Error("Error al modificar la nota total")}

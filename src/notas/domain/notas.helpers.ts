@@ -9,7 +9,7 @@ export default interface notasRepository {
 
     /*Insertar y modificar valoraciones*/
     valorar(cafe: Cafe, usuario: Usuario,nota:number): Promise<Nota>
-    modificarValoracion(cafe: Cafe, usuario: Usuario,nota:number): Promise<Nota>;
+    modificarValoracion(comprobarNota: any,nota:number): Promise<Nota>;
 
     /*Modificar total en cafe*/
     modificarTotal(cafe:Cafe): Promise<Cafe>;

@@ -73,9 +73,32 @@ router.post("/tramitar",isAuth,rejectAdmin, async (req: Request, res: Response) 
             correo: req.body.correo
         };
 
-        const pedido = await pedidousecases.createPedido(usuario);
+        const direccion = req.body.direccion;
+
+        const pedido = await pedidousecases.createPedido(usuario,direccion);
         console.log(pedido,"pedido")
         res.json(pedido);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "An unknown error occurred" });
+        }
+    }
+});
+
+
+router.get("/admin/pedidos",isAuth, async (req: Request, res: Response) => {
+    /*
+    * #swagger.tags = ['Pedidos']
+    * #swagger.description = 'Endpoint para obtener los cafes que tiene que enviar una tienda'
+    */
+
+    const tienda = req.body.tienda_alias;
+
+    try {
+        const pedidos = await pedidousecases.getPedidosAdmin(tienda);
+        res.json(pedidos);
     } catch (error) {
         if (error instanceof Error) {
             res.status(500).json({ error: error.message });
