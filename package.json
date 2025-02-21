@@ -6,6 +6,8 @@
     "scripts": {
         "dev": "nodemon index.ts",
         "nuevo": "node genera-carpetas.js",
+        "build": "tsc",
+        "start": "node dist/index.js",
         "swagger": "node ./swagger.js",
         "test": "NODE_ENV=test jest --coverage --runInBand --coverageReporters=html"
     },
@@ -21,7 +23,7 @@
         "express": "^4.18.2",
         "install": "^0.13.0",
         "jsonwebtoken": "^9.0.2",
-        "mongodb": "^6.12.0",
+        "mongodb": "^6.13.1",
         "pg": "^8.11.3",
         "supertest": "^7.0.0",
         "swagger-autogen": "^2.23.7",

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const url = process.env.MONGO_URL || "mongodb://localhost:27017";
+const url = process.env.MONGO_URL || "mongodb+srv://Altocli:18175118N@pinguino.onpka.mongodb.net/?retryWrites=true&w=majority&appName=Pinguino";
 const dbName = process.env.MONGO_DB_NAME || "myDatabase";
 const collections: { [key: string]: Collection } = {};
 
