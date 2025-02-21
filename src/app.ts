@@ -2,13 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import usuarioRouter from "./src/usuarios/infraestructure/rest/usuarios.rest"
-import cafeRouter from "./src/cafes/infraestructure/rest/cafes.rest"
-import notaRouter from "./src/notas/infrastructure/rest/notas.rest"
+import usuarioRouter from "./usuarios/infraestructure/rest/usuarios.rest"
+import cafeRouter from "./cafes/infraestructure/rest/cafes.rest"
+import notaRouter from "./notas/infrastructure/rest/notas.rest"
 
-import pedidosRouter from "./src/pedidos/infrastructure/rest/pedidos.rest"
+import pedidosRouter from "./pedidos/infrastructure/rest/pedidos.rest"
 
-import createMongoConnection from "./context/mongo.db";
+import createMongoConnection from "../context/mongo.db";
 createMongoConnection()
 
 dotenv.config();
