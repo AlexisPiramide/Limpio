@@ -13,7 +13,7 @@ createMongoConnection()
 
 dotenv.config();
 
-const allowedOrigins = ["http://localhost:5173","https://front:5173","http://localhost:5174","https://front:5174"];
+const allowedOrigins = ["http://localhost:5173","https://front:5173","http://localhost:5174","https://front:5174,https://main.d2iwgcwwl5ssby.amplifyapp.com/"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
 };
