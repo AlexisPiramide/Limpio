@@ -20,6 +20,9 @@ const allowedOrigins = ["http://localhost:5173","https://44.212.1.19:5173","http
   origin: allowedOrigins,
 };
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
+
 const app = express();
 app.use(express.json());
 app.use(cors(options));
@@ -28,6 +31,6 @@ app.use(`/api/usuarios`, usuarioRouter);
 app.use(`/api/cafes`, cafeRouter);
 app.use(`/api/notas`, notaRouter);
 app.use(`/api/pedidos`,pedidosRouter);
-//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;
