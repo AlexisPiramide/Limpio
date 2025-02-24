@@ -7,8 +7,8 @@
         "dev": "nodemon ./src/index.ts",
         "nuevo": "node genera-carpetas.js",
         "build": "tsc",
-        "start": "node dist/index.js",
-        "swagger": "node ./swagger.js",
+        "start": "node dist/src/index.js",
+        "swagger": "node ./src/swagger.js",
         "test": "NODE_ENV=test jest --coverage --runInBand --coverageReporters=html"
     },
     "author": "",

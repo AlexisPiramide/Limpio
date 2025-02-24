@@ -13,13 +13,10 @@ createMongoConnection()
 
 dotenv.config();
 
-const allowedOrigins = ["http://localhost:5173","https://front:5173","http://localhost:5174","https://front:5174,https://main.d2iwgcwwl5ssby.amplifyapp.com/"];
+const allowedOrigins = ["http://localhost:5173","https://44.212.1.19:5173","http://localhost:5174","https://44.212.1.19:5174,https://main.d2iwgcwwl5ssby.amplifyapp.com/"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
 };
-
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../swagger-output.json');
 
 const app = express();
 app.use(express.json());
